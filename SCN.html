@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        .directions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f5ff;
+            border-left: 4px solid #0056b3;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VNR VJIET Smart Campus Navigation</h1>
+        <label for="start">Select Your Current Location:</label>
+        <select id="start">
+            <option value="Entrance">Entrance</option>
+            <option value="PEB">PEB Block</option>
+            <option value="MBA">MBA Block</option>
+            <option value="MBA Canteen">MBA Canteen</option>
+            <option value="Sports Block">Sports Block</option>
+            <option value="I Love VNR">I Love VNR Circle</option>
+            <option value="Main Student Parking">Main Student Parking</option>
+            <option value="Coca Cola Canteen">Coca Cola Canteen</option>
+            <option value="SAC Stage">SAC Stage</option>
+            <option value="New Building">New Building</option>
+            <option value="C Block">C Block</option>
+            <option value="Library">Library</option>
+            <option value="JSK Greens">JSK Greens</option>
+            <option value="D Block">D Block</option>
+            <option value="PG Block">PG Block</option>
+            <option value="Academic Section">Academic Section</option>
+        </select>
+
+        <label for="end">Select Your Destination:</label>
+        <select id="end">
+            <option value="Entrance">Entrance</option>
+            <option value="PEB">PEB Block</option>
+            <option value="MBA">MBA Block</option>
+            <option value="MBA Canteen">MBA Canteen</option>
+            <option value="Sports Block">Sports Block</option>
+            <option value="I Love VNR">I Love VNR Circle</option>
+            <option value="Main Student Parking">Main Student Parking</option>
+            <option value="Coca Cola Canteen">Coca Cola Canteen</option>
+            <option value="SAC Stage">SAC Stage</option>
+            <option value="New Building">New Building</option>
+            <option value="C Block">C Block</option>
+            <option value="Library">Library</option>
+            <option value="JSK Greens">JSK Greens</option>
+            <option value="D Block">D Block</option>
+            <option value="PG Block">PG Block</option>
+            <option value="Academic Section">Academic Section</option>
+        </select>
+
+        <button onclick="getDirections()">Get Directions</button>
+
+        <div id="directions" class="directions"></div>
+    </div>
+
+    <script>
+        const routes = {
+            "Entrance": {
+                "PEB": "From Entrance, go right to reach PEB Block.",
+                "MBA": "From Entrance, go further right past PEB to reach MBA Block.",
+                "MBA Canteen": "From Entrance, proceed to the right, past PEB, to find MBA Canteen.",
+                "Sports Block": "From Entrance, continue past MBA Block to reach the Sports Block.",
+                "I Love VNR": "Walk straight for 250 meters from Entrance to reach I Love VNR Circle.",
+                "Main Student Parking": "From Entrance, walk straight to I Love VNR Circle, then take the right path to Main Student Parking.",
+                "Coca Cola Canteen": "From Entrance, go straight past I Love VNR Circle to find Coca Cola Canteen on the right.",
+                "SAC Stage": "From Entrance, proceed straight to Coca Cola Canteen, and SAC Stage is behind it.",
+                "New Building": "From Entrance, continue straight past I Love VNR Circle and Coca Cola Canteen to reach New Building.",
+                "C Block": "From Entrance, proceed straight to New Building, then find C Block opposite it.",
+                "Library": "From Entrance, go straight to C Block and find the Library on its first floor.",
+                "JSK Greens": "From Entrance, go straight past C Block and New Building to find JSK Greens.",
+                "D Block": "From Entrance, proceed past JSK Greens to reach D Block on the left.",
+                "PG Block": "From Entrance, continue past D Block to find PG Block on the right.",
+                "Academic Section": "From Entrance, go to D Block, and the Academic Section is on its fifth floor."
+            },
+            "PEB": {
+                "Entrance": "Go left from PEB to reach the Entrance.",
+                "MBA": "Go right from PEB to reach MBA Block.",
+                "MBA Canteen": "Go right past PEB to find MBA Canteen.",
+                "Sports Block": "Go right past MBA to find the Sports Block.",
+                "I Love VNR": "From PEB, walk straight to I Love VNR Circle.",
+                "Main Student Parking": "Walk to I Love VNR Circle from PEB and take the right path to Main Student Parking.",
+                "Coca Cola Canteen": "Walk to I Love VNR Circle from PEB, then go straight to find Coca Cola Canteen on the right.",
+                "SAC Stage": "From PEB, go to Coca Cola Canteen, and SAC Stage is behind it.",
+                "New Building": "Walk straight from PEB, past I Love VNR Circle and Coca Cola Canteen to reach New Building.",
+                "C Block": "Walk to New Building from PEB and find C Block opposite it.",
+                "Library": "Go to C Block from PEB and find the Library on the first floor.",
+                "JSK Greens": "From PEB, go past New Building and C Block to find JSK Greens.",
+                "D Block": "From PEB, go past JSK Greens to reach D Block on the left.",
+                "PG Block": "From PEB, proceed past D Block to find PG Block on the right.",
+                "Academic Section": "From PEB, head to D Block and find the Academic Section on its fifth floor."
+            },
+            "MBA": {
+                "Entrance": "Go left from MBA Block to reach the Entrance.",
+                "PEB": "Go left from MBA Block to reach PEB Block.",
+                "MBA Canteen": "MBA Canteen is right next to MBA Block.",
+                "Sports Block": "The Sports Block is right beside MBA Block.",
+                "I Love VNR": "Walk straight from MBA Block to I Love VNR Circle.",
+                "Main Student Parking": "From MBA Block, walk to I Love VNR Circle, then take the right path to Main Student Parking.",
+                "Coca Cola Canteen": "From MBA Block, walk straight past I Love VNR Circle to find Coca Cola Canteen on the right.",
+                "SAC Stage": "From MBA Block, proceed to Coca Cola Canteen and find SAC Stage behind it."
+            },
+            "MBA Canteen": {
+    "Sports Block": "From MBA Canteen, go right to reach the Sports Block.",
+    "I Love VNR": "From MBA Canteen, walk straight to I Love VNR Circle.",
+    "Main Student Parking": "From MBA Canteen, go straight to I Love VNR Circle, then right to Main Student Parking.",
+    "Coca Cola Canteen": "From MBA Canteen, walk straight to Coca Cola Canteen.",
+    "SAC Stage": "From MBA Canteen, proceed to Coca Cola Canteen and find SAC Stage behind it.",
+    "New Building": "From MBA Canteen, go straight past I Love VNR Circle to reach New Building.",
+    "C Block": "From MBA Canteen, go straight to New Building and find C Block opposite it.",
+    "Library": "From MBA Canteen, go to C Block and find the Library on its first floor.",
+    "JSK Greens": "From MBA Canteen, proceed past New Building to reach JSK Greens.",
+    "D Block": "From MBA Canteen, continue past JSK Greens to reach D Block.",
+    "PG Block": "From MBA Canteen, proceed past D Block to find PG Block.",
+    "Academic Section": "From MBA Canteen, head to D Block and find the Academic Section on its fifth floor."
+},
+"Sports Block": {
+    "MBA Canteen": "From Sports Block, go left to reach MBA Canteen.",
+    "I Love VNR": "From Sports Block, walk straight to I Love VNR Circle.",
+    "Main Student Parking": "From Sports Block, go straight to I Love VNR Circle, then right to Main Student Parking.",
+    "Coca Cola Canteen": "From Sports Block, walk straight to Coca Cola Canteen.",
+    "SAC Stage": "From Sports Block, proceed to Coca Cola Canteen and find SAC Stage behind it.",
+    "New Building": "From Sports Block, go straight past I Love VNR Circle to reach New Building.",
+    "C Block": "From Sports Block, proceed to New Building and find C Block opposite it.",
+    "Library": "From Sports Block, go to C Block and find the Library on its first floor.",
+    "JSK Greens": "From Sports Block, continue past New Building to reach JSK Greens.",
+    "D Block": "From Sports Block, proceed past JSK Greens to reach D Block.",
+    "PG Block": "From Sports Block, continue past D Block to find PG Block.",
+    "Academic Section": "From Sports Block, head to D Block and find the Academic Section on its fifth floor."
+},
+"I Love VNR": {
+    "MBA Canteen": "From I Love VNR Circle, go straight to reach MBA Canteen.",
+    "Sports Block": "From I Love VNR Circle, walk back to reach Sports Block.",
+    "Main Student Parking": "From I Love VNR Circle, take the right path to reach Main Student Parking.",
+    "Coca Cola Canteen": "From I Love VNR Circle, go straight to Coca Cola Canteen.",
+    "SAC Stage": "From I Love VNR Circle, proceed to Coca Cola Canteen and find SAC Stage behind it.",
+    "New Building": "From I Love VNR Circle, go straight to reach New Building.",
+    "C Block": "From I Love VNR Circle, proceed to New Building and find C Block opposite it.",
+    "Library": "From I Love VNR Circle, go to C Block and find the Library on its first floor.",
+    "JSK Greens": "From I Love VNR Circle, continue past New Building to reach JSK Greens.",
+    "D Block": "From I Love VNR Circle, proceed past JSK Greens to reach D Block.",
+    "PG Block": "From I Love VNR Circle, continue past D Block to find PG Block.",
+    "Academic Section": "From I Love VNR Circle, head to D Block and find the Academic Section on its fifth floor."
+},
+"Main Student Parking": {
+    "I Love VNR": "From Main Student Parking, take the left path to reach I Love VNR Circle.",
+    "MBA Canteen": "From Main Student Parking, go left to I Love VNR Circle, then straight to MBA Canteen.",
+    "Sports Block": "From Main Student Parking, go left to I Love VNR Circle, then back to Sports Block.",
+    "Coca Cola Canteen": "From Main Student Parking, go left to I Love VNR Circle, then straight to Coca Cola Canteen.",
+    "SAC Stage": "From Main Student Parking, proceed to Coca Cola Canteen and find SAC Stage behind it.",
+    "New Building": "From Main Student Parking, go left to I Love VNR Circle, then straight to New Building.",
+    "C Block": "From Main Student Parking, go to New Building and find C Block opposite it.",
+    "Library": "From Main Student Parking, go to C Block and find the Library on its first floor.",
+    "JSK Greens": "From Main Student Parking, continue past New Building to reach JSK Greens.",
+    "D Block": "From Main Student Parking, proceed past JSK Greens to reach D Block.",
+    "PG Block": "From Main Student Parking, continue past D Block to find PG Block.",
+    "Academic Section": "From Main Student Parking, head to D Block and find the Academic Section on its fifth floor."
+}
+
+            // Add further routes for all landmarks here
+        };
+
+        function getDirections() {
+            const start = document.getElementById("start").value;
+            const end = document.getElementById("end").value;
+
+            const directionsDiv = document.getElementById("directions");
+            
+            if (start === end) {
+                directionsDiv.innerHTML = "You are already at your destination.";
+                return;
+            }
+
+            const directions = routes[start]?.[end] || "Sorry, no direct route available. Please try another landmark.";
+
+            directionsDiv.innerHTML = directions;
+        }
+    </script>
+</body>
+</html>
